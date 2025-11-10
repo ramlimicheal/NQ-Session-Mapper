@@ -125,3 +125,122 @@ export interface PerformanceMetrics {
     rewardRiskRatio: number;
     totalTrades: number;
 }
+
+// ============================================
+// STRATEGY-BASED TRADING SYSTEM TYPES
+// ============================================
+
+export type StrategyType = 'ICT' | 'SMC' | 'SESSION' | 'SUPPLY_DEMAND' | 'MARKET_PROFILE';
+
+export interface OrderBlock {
+    price: number;
+    type: 'bullish' | 'bearish';
+    strength: 'strong' | 'moderate' | 'weak';
+    tested: boolean;
+}
+
+export interface FairValueGap {
+    topPrice: number;
+    bottomPrice: number;
+    type: 'bullish' | 'bearish';
+    filled: boolean;
+}
+
+export interface StructureBreak {
+    price: number;
+    type: 'BOS' | 'ChoCH'; // Break of Structure or Change of Character
+    direction: 'bullish' | 'bearish';
+}
+
+export interface SupplyDemandZone {
+    topPrice: number;
+    bottomPrice: number;
+    type: 'supply' | 'demand';
+    strength: 'fresh' | 'tested' | 'weak';
+    touches: number;
+}
+
+export interface StrategySignal {
+    strategy: StrategyType;
+    entryPrice: number;
+    stopLoss: number;
+    takeProfit: number;
+    direction: 'LONG' | 'SHORT';
+    confidence: number; // 0-100
+    reasoning: string;
+    riskRewardRatio: number;
+    setupDetails: {
+        orderBlocks?: OrderBlock[];
+        fairValueGaps?: FairValueGap[];
+        structureBreaks?: StructureBreak[];
+        supplyDemandZones?: SupplyDemandZone[];
+        sessionLevels?: { level: string; price: number }[];
+    };
+}
+
+export interface DayStrategyAnalysis {
+    date: string;
+    dayOfWeek: string;
+    detectedStrategies: StrategySignal[];
+    confluenceScore: number; // Number of strategies aligned
+    bestSetup: StrategySignal | null;
+}
+
+export interface StrategyPerformance {
+    strategyName: StrategyType;
+    displayName: string;
+    totalTrades: number;
+    winningTrades: number;
+    losingTrades: number;
+    winRate: number;
+    netPnl: number;
+    avgWin: number;
+    avgLoss: number;
+    profitFactor: number;
+    bestDay: string;
+    bestSession: string;
+}
+
+export interface PredictedTradeSetup {
+    date: string;
+    dayOfWeek: string;
+    setupName: string;
+    strategies: StrategyType[]; // Which strategies confirm this setup
+    confluenceScore: number;
+    entryPrice: number;
+    stopLoss: number;
+    stopLossPoints: number;
+    takeProfit: number;
+    takeProfitPoints: number;
+    direction: 'LONG' | 'SHORT';
+    probability: number; // 0-100
+    riskRewardRatio: number;
+    positionSize: number; // Number of MNQ contracts
+    riskAmount: number; // Dollar risk (should be ~$1000 for 2%)
+    potentialProfit: number;
+    reasoning: string;
+    technicalDetails: string;
+}
+
+export interface NextDayPrediction {
+    date: string;
+    dayOfWeek: string;
+    topSetups: PredictedTradeSetup[];
+    marketBias: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
+    keyLevels: {
+        resistance: number[];
+        support: number[];
+    };
+    recommendation: string;
+}
+
+export interface StrategyForecastResult {
+    strategyLeaderboard: StrategyPerformance[];
+    weeklyPredictions: PredictedTradeSetup[];
+    nextDayPrediction: NextDayPrediction | null;
+    topConfluenceSetups: PredictedTradeSetup[]; // Top 5 highest confluence
+    generatedAt: string;
+    accountSize: number;
+    riskPercentage: number;
+    maxStopLoss: number;
+}
