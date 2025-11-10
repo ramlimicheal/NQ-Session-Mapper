@@ -1,0 +1,5 @@
+{
+  "name": "SessionMap AI Pro",
+  "description": "An advanced trading analysis tool that uses Gemini AI to analyze NASDAQ futures charts. Users can upload charts with session data, and the application provides statistical analysis of session level reactions and generates predictive weekly forecasts to identify high-probability trading setups.",
+  "requestFramePermissions": []
+}
